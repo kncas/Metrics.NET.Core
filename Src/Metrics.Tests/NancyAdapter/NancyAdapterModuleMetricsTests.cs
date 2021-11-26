@@ -16,19 +16,19 @@ namespace Metrics.Tests.NancyAdapter
                 this.MetricForRequestTimeAndResponseSize("Action Request", "Get", "/");
                 this.MetricForRequestSize("Request Size", "Put", "/");
 
-                Get["/action"] = _ =>
+                Get("/action", args =>
                 {
                     clock.Advance(TimeUnit.Milliseconds, 100);
                     return Response.AsText("response");
-                };
+                });
 
-                Get["/contentWithLength"] = _ =>
+                Get("/contentWithLength", args =>
                 {
                     clock.Advance(TimeUnit.Milliseconds, 100);
                     return Response.AsText("response").WithHeader("Content-Length", "100");
-                };
+                });
 
-                Put["/size"] = _ => HttpStatusCode.OK;
+                Put("/size", args => HttpStatusCode.OK);
             }
         }
 
@@ -51,10 +51,11 @@ namespace Metrics.Tests.NancyAdapter
         }
 
         [Fact]
-        public void NancyMetrics_ShouldBeAbleToMonitorTimeForModuleRequest()
+        public async void NancyMetrics_ShouldBeAbleToMonitorTimeForModuleRequest()
         {
             this.context.TimerValue("NancyFx", "Action Request").Rate.Count.Should().Be(0);
-            browser.Get("/test/action").StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await browser.Get("/test/action");
+            result.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var timer = this.context.TimerValue("NancyFx", "Action Request");
 
@@ -64,9 +65,10 @@ namespace Metrics.Tests.NancyAdapter
         }
 
         [Fact]
-        public void NancyMetrics_ShouldBeAbleToMonitorSizeForRouteReponse()
+        public async void NancyMetrics_ShouldBeAbleToMonitorSizeForRouteReponse()
         {
-            browser.Get("/test/action").StatusCode.Should().Be(HttpStatusCode.OK);
+            var actionResult = await browser.Get("/test/action");
+            actionResult.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var sizeHistogram = this.context.HistogramValue("NancyFx", "Action Request");
 
@@ -74,7 +76,8 @@ namespace Metrics.Tests.NancyAdapter
             sizeHistogram.Min.Should().Be("response".Length);
             sizeHistogram.Max.Should().Be("response".Length);
 
-            browser.Get("/test/contentWithLength").StatusCode.Should().Be(HttpStatusCode.OK);
+            var contentResult = await browser.Get("/test/contentWithLength");
+            contentResult.StatusCode.Should().Be(HttpStatusCode.OK);
 
             sizeHistogram = this.context.HistogramValue("NancyFx", "Action Request");
 
@@ -84,15 +87,15 @@ namespace Metrics.Tests.NancyAdapter
         }
 
         [Fact]
-        public void NancyMetrics_ShouldBeAbleToMonitorSizeForRequest()
+        public async void NancyMetrics_ShouldBeAbleToMonitorSizeForRequest()
         {
             this.context.HistogramValue("NancyFx", "Request Size").Count.Should().Be(0);
 
-            browser.Put("/test/size", ctx =>
+            (await browser.Put("/test/size", ctx =>
             {
                 ctx.Header("Content-Length", "content".Length.ToString());
                 ctx.Body("content");
-            }).StatusCode.Should().Be(HttpStatusCode.OK);
+            })).StatusCode.Should().Be(HttpStatusCode.OK);
 
             var sizeHistogram = this.context.HistogramValue("NancyFx", "Request Size");
 

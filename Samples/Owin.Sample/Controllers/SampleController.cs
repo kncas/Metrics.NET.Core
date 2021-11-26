@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Web.Http;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
 namespace Owin.Sample.Controllers
 {
-    [RoutePrefix("sample")]
-    public class SampleController : ApiController
+    [Route("sample")]
+    public class SampleController : ControllerBase
     {
         [Route("")]
         public IEnumerable<string> Get()

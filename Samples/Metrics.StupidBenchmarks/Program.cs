@@ -8,72 +8,70 @@ namespace Metrics.StupidBenchmarks
 {
     class CommonOptions
     {
-        [Option('c', HelpText = "Max Threads", DefaultValue = 32)]
+        [Option('c', HelpText = "Max Threads", Default = 32)]
         public int MaxThreads { get; set; }
 
-        [Option('s', HelpText = "Seconds", DefaultValue = 5)]
+        [Option('s', HelpText = "Seconds", Default = 5)]
         public int Seconds { get; set; }
 
-        [Option('d', HelpText = "Number of threads to decrement each step", DefaultValue = 4)]
+        [Option('d', HelpText = "Number of threads to decrement each step", Default = 4)]
         public int Decrement { get; set; }
 
-        [HelpOption]
-        public string GetUsage()
-        {
-            return HelpText.AutoBuild(this);
-        }
+        //[HelpOption]
+        //public string GetUsage()
+        //{
+        //    return HelpText.AutoBuild(this);
+        //}
     }
 
-    class Options
-    {
-        [VerbOption("Counter")]
-        public CommonOptions Counter { get; set; }
 
-        [VerbOption("Meter")]
-        public CommonOptions Meter { get; set; }
+        [Verb("Counter")]
+        class Counter { }
 
-        [VerbOption("Histogram")]
-        public CommonOptions Histogram { get; set; }
+        [Verb("Meter")]
+        class Meter { }
 
-        [VerbOption("Timer")]
-        public CommonOptions Timer { get; set; }
+        [Verb("Histogram")]
+        class Histogram {  }
 
-        [VerbOption("EWMA")]
-        public CommonOptions Ewma { get; set; }
+        [Verb("Timer")]
+        class Timer {  }
 
-        [VerbOption("EDR")]
-        public CommonOptions Edr { get; set; }
+        [Verb("EWMA")]
+    class Ewma { }
 
-        [VerbOption("hdr")]
-        public CommonOptions Hdr { get; set; }
+        [Verb("EDR")]
+    class Edr {  }
 
-        [VerbOption("hdrtimer")]
-        public CommonOptions HdrTimer { get; set; }
+        [Verb("hdr")]
+    class Hdr {  }
 
-        [VerbOption("hdrsync")]
-        public CommonOptions HdrSync { get; set; }
+        [Verb("hdrtimer")]
+    class HdrTimer {  }
 
-        [VerbOption("hdrsynctimer")]
-        public CommonOptions HdrSyncTimer { get; set; }
+        [Verb("hdrsync")]
+    class HdrSync { }
 
-        [VerbOption("Uniform")]
-        public CommonOptions Uniform { get; set; }
+        [Verb("hdrsynctimer")]
+    class HdrSyncTimer { }
 
-        [VerbOption("Sliding")]
-        public CommonOptions Sliding { get; set; }
+        [Verb("Uniform")]
+    class Uniform {  }
 
-        [VerbOption("TimerImpact")]
-        public CommonOptions TimerImpact { get; set; }
+        [Verb("Sliding")]
+    class Sliding { }
 
-        [VerbOption("NoOp")]
-        public CommonOptions NoOp { get; set; }
+        [Verb("TimerImpact")]
+    class TimerImpact {  }
 
-        [HelpVerbOption]
-        public string GetUsage(string verb)
-        {
-            return HelpText.AutoBuild(this);
-        }
-    }
+        [Verb("NoOp")]
+    class NoOp { }
+
+        //[HelpVerb]
+        //public string GetUsage(string verb)
+        //{
+        //    return HelpText.AutoBuild(this);
+        //}
 
     class Program
     {
@@ -82,8 +80,8 @@ namespace Metrics.StupidBenchmarks
 
         static void Main(string[] args)
         {
-            var options = new Options();
-            if (!Parser.Default.ParseArguments(args, options, (t, o) => { target = t; targetOptions = o as CommonOptions; }))
+   
+            if (Parser.Default.ParseArguments<Counter, Meter, Histogram, Timer, Ewma, Edr, Hdr,HdrHistogramReservoir, HdrSync, HdrSyncTimer, HdrTimer,Sliding,TimerImpact, NoOp>(args, options, (t, o) => { target = t; targetOptions = o as CommonOptions; }))
             {
                 Console.WriteLine(new CommonOptions().GetUsage());
                 Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);

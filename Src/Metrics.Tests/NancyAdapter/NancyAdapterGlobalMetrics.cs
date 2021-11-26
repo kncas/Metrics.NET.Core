@@ -14,8 +14,8 @@ namespace Metrics.Tests.NancyAdapter
             public ActiveRequestsModule(Task trigger, TaskCompletionSource<int> request1, TaskCompletionSource<int> request2)
                 : base("/concurrent")
             {
-                Get["/request1"] = _ => { request1.SetResult(0); Task.WaitAll(trigger); return HttpStatusCode.OK; };
-                Get["/request2"] = _ => { request2.SetResult(0); Task.WaitAll(trigger); return HttpStatusCode.OK; };
+                Get("/request1",args => { request1.SetResult(0); Task.WaitAll(trigger); return HttpStatusCode.OK; });
+                Get("/request2", args => { request2.SetResult(0); Task.WaitAll(trigger); return HttpStatusCode.OK; });
             }
         }
 
@@ -24,31 +24,31 @@ namespace Metrics.Tests.NancyAdapter
             public TestModule(TestClock clock)
                 : base("/test")
             {
-                Get["/action"] = _ =>
+                Get("/action",args =>
                 {
                     clock.Advance(TimeUnit.Milliseconds, 100);
                     return Response.AsText("response");
-                };
+                });
 
-                Post["/post"] = _ =>
+                Post("/post", args =>
                 {
                     clock.Advance(TimeUnit.Milliseconds, 200);
                     return HttpStatusCode.OK;
-                };
+                });
 
-                Put["/put"] = _ =>
+                Put("/put",args=>
                 {
                     clock.Advance(TimeUnit.Milliseconds, 200);
                     return HttpStatusCode.OK;
-                };
+                });
 
-                Patch["/patch"] = _ =>
+                Patch("/patch", args =>
                 {
                     clock.Advance(TimeUnit.Milliseconds, 200);
                     return HttpStatusCode.OK;
-                };
+                });
 
-                Get["/error"] = _ => { throw new InvalidOperationException(); };
+                Get("/error",args => { throw new InvalidOperationException(); });
             }
         }
 
@@ -77,11 +77,11 @@ namespace Metrics.Tests.NancyAdapter
         }
 
         [Fact]
-        public void NancyMetrics_ShouldBeAbleToRecordTimeForAllRequests()
+        public async void NancyMetrics_ShouldBeAbleToRecordTimeForAllRequests()
         {
             this.context.TimerValue("NancyFx", "Requests").Rate.Count.Should().Be(0);
 
-            browser.Get("/test/action").StatusCode.Should().Be(HttpStatusCode.OK);
+            (await browser.Get("/test/action")).StatusCode.Should().Be(HttpStatusCode.OK);
 
             var timer = this.context.TimerValue("NancyFx", "Requests");
 
@@ -91,7 +91,7 @@ namespace Metrics.Tests.NancyAdapter
             timer.Histogram.Max.Should().Be(100);
             timer.Histogram.Min.Should().Be(100);
 
-            browser.Post("/test/post").StatusCode.Should().Be(HttpStatusCode.OK);
+            (await browser.Post("/test/post")).StatusCode.Should().Be(HttpStatusCode.OK);
 
             timer = this.context.TimerValue("NancyFx", "Requests");
 
@@ -103,12 +103,12 @@ namespace Metrics.Tests.NancyAdapter
         }
 
         [Fact]
-        public void NancyMetrics_ShouldBeAbleToCountErrors()
+        public async void NancyMetrics_ShouldBeAbleToCountErrors()
         {
             this.context.MeterValue("NancyFx", "Errors").Count.Should().Be(0);
-            Assert.Throws<Exception>(() => browser.Get("/test/error"));
+            await Assert.ThrowsAsync<Exception>(() => browser.Get("/test/error"));
             this.context.MeterValue("NancyFx", "Errors").Count.Should().Be(1);
-            Assert.Throws<Exception>(() => browser.Get("/test/error"));
+            await Assert.ThrowsAsync<Exception>(() => browser.Get("/test/error"));
             this.context.MeterValue("NancyFx", "Errors").Count.Should().Be(2);
         }
 
@@ -131,31 +131,31 @@ namespace Metrics.Tests.NancyAdapter
         }        
 
         [Fact]
-        public void NancyMetrics_ShoulBeAbleToRecordPostPutAndPatchRequestSize()
+        public async void NancyMetrics_ShoulBeAbleToRecordPostPutAndPatchRequestSize()
         {
             this.context.HistogramValue("NancyFx", "Post, Put & Patch Request Size").Count.Should().Be(0);
 
-            browser.Get("/test/action").StatusCode.Should().Be(HttpStatusCode.OK);
+            (await browser.Get("/test/action")).StatusCode.Should().Be(HttpStatusCode.OK);
 
             this.context.HistogramValue("NancyFx", "Post, Put & Patch Request Size").Count.Should().Be(0);
 
-            browser.Post("/test/post", ctx =>
+            (await browser.Post("/test/post", ctx =>
             {
                 ctx.Header("Content-Length", "content".Length.ToString());
                 ctx.Body("content");
-            }).StatusCode.Should().Be(HttpStatusCode.OK);
+            })).StatusCode.Should().Be(HttpStatusCode.OK);
 
-            browser.Put("/test/put", ctx =>
+            (await browser.Put("/test/put", ctx =>
             {
                 ctx.Header("Content-Length", "content".Length.ToString());
                 ctx.Body("content");
-            }).StatusCode.Should().Be(HttpStatusCode.OK);
+            })).StatusCode.Should().Be(HttpStatusCode.OK);
 
-            browser.Patch("/test/patch", ctx =>
+            (await browser.Patch("/test/patch", ctx =>
             {
                 ctx.Header("Content-Length", "content".Length.ToString());
                 ctx.Body("content");
-            }).StatusCode.Should().Be(HttpStatusCode.OK);
+            })).StatusCode.Should().Be(HttpStatusCode.OK);
 
             this.context.HistogramValue("NancyFx", "Post, Put & Patch Request Size").Count.Should().Be(3);
             this.context.HistogramValue("NancyFx", "Post, Put & Patch Request Size").Min.Should().Be("content".Length);
@@ -163,18 +163,18 @@ namespace Metrics.Tests.NancyAdapter
         }
 
         [Fact]
-        public void NancyMetrics_ShouldBeAbleToRecordTimeForEachRequests()
+        public async void NancyMetrics_ShouldBeAbleToRecordTimeForEachRequests()
         {
             this.context.TimerValue("NancyFx", "Requests").Rate.Count.Should().Be(0);
 
-            browser.Get("/test/action").StatusCode.Should().Be(HttpStatusCode.OK);
+            (await browser.Get("/test/action")).StatusCode.Should().Be(HttpStatusCode.OK);
 
             var timer = this.context.TimerValue("NancyFx", "GET /test/action");
 
             timer.Rate.Count.Should().Be(1);
             timer.Histogram.Count.Should().Be(1);
 
-            browser.Post("/test/post").StatusCode.Should().Be(HttpStatusCode.OK);
+            (await browser.Post("/test/post")).StatusCode.Should().Be(HttpStatusCode.OK);
 
             timer = this.context.TimerValue("NancyFx", "POST /test/post");
 
