@@ -4,7 +4,7 @@ namespace Metrics.StupidBenchmarks
 {
     public class WorkLoad
     {
-        private static readonly Timer timer = Metric.Timer("test", Unit.Calls, durationUnit: TimeUnit.Nanoseconds);
+        private static readonly Metrics.Timer timer = Metric.Timer("test", Unit.Calls, durationUnit: TimeUnit.Nanoseconds);
 
         public void DoSomeWork()
         {

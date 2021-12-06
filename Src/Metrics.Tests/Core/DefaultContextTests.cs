@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Metrics.MetricData;
+using System;
+using System.Linq;
 using Xunit;
 
 namespace Metrics.Tests.Core
@@ -9,7 +9,8 @@ namespace Metrics.Tests.Core
     public class DefaultContextTests
     {
         private readonly MetricsContext context = new DefaultMetricsContext();
-        public MetricsData CurrentData { get { return this.context.DataProvider.CurrentMetricsData; } }
+        public MetricsData CurrentData
+        { get { return this.context.DataProvider.CurrentMetricsData; } }
 
         [Fact]
         public void MetricsContext_EmptyChildContextIsSameContext()
@@ -56,17 +57,17 @@ namespace Metrics.Tests.Core
         [Fact]
         public void MetricsContext_RaisesShutdownEventOnMetricsDisable()
         {
-            context.MonitorEvents();
+            using var subject = context.Monitor();
             context.Advanced.CompletelyDisableMetrics();
-            context.ShouldRaise("ContextShuttingDown");
+            subject.Should().Raise("ContextShuttingDown");
         }
 
         [Fact]
         public void MetricsContext_RaisesShutdownEventOnDispose()
         {
-            context.MonitorEvents();
+            using var subject = context.Monitor();
             context.Dispose();
-            context.ShouldRaise("ContextShuttingDown");
+            subject.Should().Raise("ContextShuttingDown");
         }
 
         [Fact]
@@ -125,7 +126,7 @@ namespace Metrics.Tests.Core
                 context.Meter(name, Unit.Calls);
                 context.Histogram(name, Unit.Calls);
                 context.Timer(name, Unit.Calls);
-            })).ShouldNotThrow();
+            })).Should().NotThrow();
         }
 
         [Fact]

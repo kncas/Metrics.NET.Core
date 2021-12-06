@@ -17,10 +17,13 @@ namespace Metrics.PerfCounters
         {
             try
             {
-                this.performanceCounter = instance == null ?
-                    new PerformanceCounter(category, counter, true) :
-                    new PerformanceCounter(category, counter, instance, true);
-                Metric.Internal.Counter("Performance Counters", Unit.Custom("Perf Counters")).Increment();
+                if (OperatingSystem.IsWindows())
+                {
+                    this.performanceCounter = instance == null ?
+                        new PerformanceCounter(category, counter, true) :
+                        new PerformanceCounter(category, counter, instance, true);
+                    Metric.Internal.Counter("Performance Counters", Unit.Custom("Perf Counters")).Increment();
+                }
             }
             catch (Exception x)
             {
@@ -34,7 +37,11 @@ namespace Metrics.PerfCounters
         {
             try
             {
-                return WindowsIdentity.GetCurrent().Name;
+                if (OperatingSystem.IsWindows())
+                {
+                    return WindowsIdentity.GetCurrent().Name;
+                }
+                return "[Unknown user | OS system not supported ]";
             }
             catch (Exception x)
             {
@@ -53,7 +60,14 @@ namespace Metrics.PerfCounters
             {
                 try
                 {
-                    return this.performanceCounter?.NextValue() ?? double.NaN;
+                    if (OperatingSystem.IsWindows())
+                    {
+                        return this.performanceCounter?.NextValue() ?? double.NaN;
+                    }
+                    else
+                    {
+                        return double.NaN;
+                    }
                 }
                 catch (Exception x)
                 {

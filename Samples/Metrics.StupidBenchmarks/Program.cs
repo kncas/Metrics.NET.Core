@@ -1,12 +1,11 @@
-﻿using System;
-using CommandLine;
-using CommandLine.Text;
+﻿using CommandLine;
 using Metrics.Core;
 using Metrics.Sampling;
 using Metrics.Utils;
+
 namespace Metrics.StupidBenchmarks
 {
-    class CommonOptions
+    internal class CommonOptions
     {
         [Option('c', HelpText = "Max Threads", Default = 32)]
         public int MaxThreads { get; set; }
@@ -24,125 +23,144 @@ namespace Metrics.StupidBenchmarks
         //}
     }
 
+    [Verb("Counter")]
+    internal class Counter
+    { }
 
-        [Verb("Counter")]
-        class Counter { }
+    [Verb("Meter")]
+    internal class Meter
+    { }
 
-        [Verb("Meter")]
-        class Meter { }
+    [Verb("Histogram")]
+    internal class Histogram
+    { }
 
-        [Verb("Histogram")]
-        class Histogram {  }
+    [Verb("Timer")]
+    internal class Timer
+    { }
 
-        [Verb("Timer")]
-        class Timer {  }
+    [Verb("EWMA")]
+    internal class Ewma
+    { }
 
-        [Verb("EWMA")]
-    class Ewma { }
+    [Verb("EDR")]
+    internal class Edr
+    { }
 
-        [Verb("EDR")]
-    class Edr {  }
+    [Verb("hdr")]
+    internal class Hdr
+    { }
 
-        [Verb("hdr")]
-    class Hdr {  }
+    [Verb("hdrtimer")]
+    internal class HdrTimer
+    { }
 
-        [Verb("hdrtimer")]
-    class HdrTimer {  }
+    [Verb("hdrsync")]
+    internal class HdrSync
+    { }
 
-        [Verb("hdrsync")]
-    class HdrSync { }
+    [Verb("hdrsynctimer")]
+    internal class HdrSyncTimer
+    { }
 
-        [Verb("hdrsynctimer")]
-    class HdrSyncTimer { }
+    [Verb("Uniform")]
+    internal class Uniform
+    { }
 
-        [Verb("Uniform")]
-    class Uniform {  }
+    [Verb("Sliding")]
+    internal class Sliding
+    { }
 
-        [Verb("Sliding")]
-    class Sliding { }
+    [Verb("TimerImpact")]
+    internal class TimerImpact
+    { }
 
-        [Verb("TimerImpact")]
-    class TimerImpact {  }
+    [Verb("NoOp")]
+    internal class NoOp
+    { }
 
-        [Verb("NoOp")]
-    class NoOp { }
+    //[HelpVerb]
+    //public string GetUsage(string verb)
+    //{
+    //    return HelpText.AutoBuild(this);
+    //}
 
-        //[HelpVerb]
-        //public string GetUsage(string verb)
-        //{
-        //    return HelpText.AutoBuild(this);
-        //}
-
-    class Program
+    internal class Program
     {
         private static string target;
         private static CommonOptions targetOptions;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-   
-            if (Parser.Default.ParseArguments<Counter, Meter, Histogram, Timer, Ewma, Edr, Hdr,HdrHistogramReservoir, HdrSync, HdrSyncTimer, HdrTimer,Sliding,TimerImpact, NoOp>(args, options, (t, o) => { target = t; targetOptions = o as CommonOptions; }))
-            {
-                Console.WriteLine(new CommonOptions().GetUsage());
-                Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
-            }
-
             BenchmarkRunner.DefaultTotalSeconds = targetOptions.Seconds;
             BenchmarkRunner.DefaultMaxThreads = targetOptions.MaxThreads;
 
             //Metric.Config.WithHttpEndpoint("http://localhost:1234/");
 
-            switch (target)
-            {
-                case "noop":
-                    BenchmarkRunner.Run("Noop", () => { });
-                    break;
-                case "counter":
+            Parser.Default.ParseArguments<Counter, Meter, Histogram, Timer, Ewma, Edr, Hdr, HdrHistogramReservoir, HdrSync, HdrSyncTimer, Uniform, HdrTimer, Sliding, TimerImpact, NoOp>(args)
+                .WithParsed<Counter>(o =>
+                {
                     var counter = new CounterMetric();
                     BenchmarkRunner.Run("Counter", () => counter.Increment());
-                    break;
-                case "meter":
+                })
+                .WithParsed<Meter>(o =>
+                {
                     var meter = new MeterMetric();
                     BenchmarkRunner.Run("Meter", () => meter.Mark());
-                    break;
-                case "histogram":
+                })
+                .WithParsed<Histogram>(o =>
+                {
                     var histogram = new HistogramMetric();
                     BenchmarkRunner.Run("Histogram", () => histogram.Update(137));
-                    break;
-                case "timer":
+                })
+                .WithParsed<Timer>(o =>
+                {
                     var timer = new TimerMetric();
                     BenchmarkRunner.Run("Timer", () => timer.Record(1, TimeUnit.Milliseconds));
-                    break;
-                case "hdrtimer":
-                    var hdrTimer = new TimerMetric(new HdrHistogramReservoir());
-                    BenchmarkRunner.Run("HDR Timer", () => hdrTimer.Record(1, TimeUnit.Milliseconds));
-                    break;
-                case "ewma":
+                })
+                .WithParsed<Ewma>(o =>
+                {
                     var ewma = EWMA.OneMinuteEWMA();
                     BenchmarkRunner.Run("EWMA", () => ewma.Update(1));
-                    break;
-                case "edr":
+                })
+                .WithParsed<Edr>(o =>
+                {
                     var edr = new ExponentiallyDecayingReservoir();
                     BenchmarkRunner.Run("EDR", () => edr.Update(1));
-                    break;
-                case "hdr":
+                })
+                .WithParsed<Hdr>(o =>
+                {
                     var hdrReservoir = new HdrHistogramReservoir();
                     BenchmarkRunner.Run("HDR Recorder", () => hdrReservoir.Update(1));
-                    break;
-                case "uniform":
+                })
+                .WithParsed<HdrHistogramReservoir>(o => { })
+                .WithParsed<HdrSync>(o => { })
+                .WithParsed<HdrSyncTimer>(o => { })
+                .WithParsed<Uniform>(o =>
+                {
                     var uniform = new UniformReservoir();
                     BenchmarkRunner.Run("Uniform", () => uniform.Update(1));
-                    break;
-                case "sliding":
+                })
+                .WithParsed<HdrTimer>(o =>
+                {
+                    var hdrTimer = new TimerMetric(new HdrHistogramReservoir());
+                    BenchmarkRunner.Run("HDR Timer", () => hdrTimer.Record(1, TimeUnit.Milliseconds));
+                })
+                .WithParsed<Sliding>(o =>
+                {
                     var sliding = new SlidingWindowReservoir();
                     BenchmarkRunner.Run("Sliding", () => sliding.Update(1));
-                    break;
-                case "timerimpact":
+                })
+                .WithParsed<TimerImpact>(o =>
+                {
                     var load = new WorkLoad();
                     BenchmarkRunner.Run("WorkWithoutTimer", () => load.DoSomeWork(), iterationsChunk: 10);
                     BenchmarkRunner.Run("WorkWithTimer", () => load.DoSomeWorkWithATimer(), iterationsChunk: 10);
-                    break;
-            }
+                })
+                .WithParsed<NoOp>(o =>
+                {
+                    BenchmarkRunner.Run("Noop", () => { });
+                });
         }
     }
 }

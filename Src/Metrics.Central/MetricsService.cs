@@ -1,32 +1,41 @@
-﻿using System;
+﻿using Metrics.Json;
+using Metrics.RemoteMetrics;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Metrics.Json;
-using Newtonsoft.Json;
-using Topshelf;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Metrics.Central
 {
-    public class MetricsService : ServiceControl
+    public class MetricsService : IHostedService
     {
-        private const string remotesFile = "remotes.txt";
-
-        public bool Start(HostControl hostControl)
+        public MetricsService(IServiceProvider serviceProvider)
         {
-            Metric.Config
-                .WithJsonDeserialzier(JsonConvert.DeserializeObject<JsonMetricsContext>)
-                .WithAllCounters();
-
-            var remotes = ReadRemotesFromConfig();
-
-            foreach (var uri in remotes)
-            {
-                Metric.Config.RegisterRemote(uri.ToString(), uri, TimeSpan.FromSeconds(1));
-            }
-
-            return true;
+            this.serviceProvider = serviceProvider;
         }
+        private const string remotesFile = "remotes.txt";
+        private readonly IServiceProvider serviceProvider;
+
+        //public bool Start(HostControl hostControl)
+        //{
+        //    Metric.Config
+        //        .WithJsonDeserialzier(JsonConvert.DeserializeObject<JsonMetricsContext>)
+        //        .WithAllCounters();
+
+        //    var remotes = ReadRemotesFromConfig();
+
+        //    foreach (var uri in remotes)
+        //    {
+        //        Metric.Config.RegisterRemote(uri.ToString(), uri, TimeSpan.FromSeconds(1));
+        //    }
+
+        //    return true;
+        //}
 
         private IEnumerable<Uri> ReadRemotesFromConfig()
         {
@@ -58,9 +67,31 @@ namespace Metrics.Central
             }
         }
 
-        public bool Stop(HostControl hostControl)
+        //public bool Stop(HostControl hostControl)
+        //{
+        //    return true;
+        //}
+
+        public Task StartAsync(CancellationToken cancellationToken)
         {
-            return true;
+            Metric.Config
+                .WithJsonDeserialzier(JsonConvert.DeserializeObject<JsonMetricsContext>)
+                .WithAllCounters();
+
+            var remotes = ReadRemotesFromConfig();
+
+            var remoteMetricsContext = serviceProvider.GetRequiredService<RemoteMetricsContext>();
+            foreach (var uri in remotes)
+            {
+                Metric.Config.RegisterRemote(uri.ToString(), uri, TimeSpan.FromSeconds(1), remoteMetricsContext);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }

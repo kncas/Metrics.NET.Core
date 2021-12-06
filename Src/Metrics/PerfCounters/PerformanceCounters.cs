@@ -115,7 +115,11 @@ namespace Metrics.PerfCounters
         {
             try
             {
-                return WindowsIdentity.GetCurrent().Name;
+                if (OperatingSystem.IsWindows())
+                {
+                    return WindowsIdentity.GetCurrent().Name;
+                }
+                return "[Unknown user | OS system not supported ]";
             }
             catch (Exception x)
             {
@@ -130,7 +134,7 @@ namespace Metrics.PerfCounters
         {
             log.Debug(() => $"Registering performance counter [{counter}] in category [{category}] for instance [{instance ?? "none"}]");
 
-            if (PerformanceCounterCategory.Exists(category))
+            if (OperatingSystem.IsWindows() && PerformanceCounterCategory.Exists(category))
             {
                 if (instance == null || PerformanceCounterCategory.InstanceExists(instance, category))
                 {

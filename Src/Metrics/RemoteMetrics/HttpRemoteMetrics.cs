@@ -1,31 +1,38 @@
-﻿using System;
-using System.Net;
+﻿using Metrics.Json;
+using System;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
-using Metrics.Json;
 
 namespace Metrics.RemoteMetrics
 {
-    public static class HttpRemoteMetrics
+    public class HttpRemoteMetrics : IHttpRemoteMetrics
     {
-        private class CustomClient : WebClient
+        private readonly HttpClient httpClient;
+
+        public HttpRemoteMetrics(HttpClient httpClient)
         {
-            protected override WebRequest GetWebRequest(Uri address)
-            {
-                HttpWebRequest request = base.GetWebRequest(address) as HttpWebRequest;
-                request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-                return request;
-            }
+            httpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+
+            this.httpClient = httpClient;
         }
 
-        public static async Task<JsonMetricsContext> FetchRemoteMetrics(Uri remoteUri, Func<string, JsonMetricsContext> deserializer, CancellationToken token)
+        //private class CustomClient : WebClients
+        //{
+        //    protected override WebRequest GetWebRequest(Uri address)
+        //    {
+        //        HttpWebRequest request = base.GetWebRequest(address) as HttpWebRequest;
+        //        request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+        //        return request;
+        //    }
+        //}
+
+        public async Task<JsonMetricsContext> FetchRemoteMetrics(Uri remoteUri, Func<string, JsonMetricsContext> deserializer, CancellationToken token)
         {
-            using (CustomClient client = new CustomClient())
-            {
-                client.Headers.Add("Accept-Encoding", "gzip");
-                var json = await client.DownloadStringTaskAsync(remoteUri).ConfigureAwait(false);
-                return deserializer(json);
-            }
+            var result = await httpClient.GetAsync(remoteUri);
+            var stringResult = await result.Content.ReadAsStringAsync();
+            return deserializer(stringResult);
         }
     }
 }
