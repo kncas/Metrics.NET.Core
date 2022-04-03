@@ -57,7 +57,8 @@ namespace Metrics.Tests.Core
         [Fact]
         public void MetricsContext_RaisesShutdownEventOnMetricsDisable()
         {
-            using var subject = context.Monitor();
+            var defaultContext = (DefaultMetricsContext)context;
+            using var subject = defaultContext.Monitor();
             context.Advanced.CompletelyDisableMetrics();
             subject.Should().Raise("ContextShuttingDown");
         }
@@ -65,7 +66,8 @@ namespace Metrics.Tests.Core
         [Fact]
         public void MetricsContext_RaisesShutdownEventOnDispose()
         {
-            using var subject = context.Monitor();
+            var defaultContext = (DefaultMetricsContext)context;
+            using var subject = defaultContext.Monitor();
             context.Dispose();
             subject.Should().Raise("ContextShuttingDown");
         }
