@@ -2,6 +2,7 @@
 using Metrics.Core;
 using Metrics.Sampling;
 using Metrics.Utils;
+using System;
 
 namespace Metrics.StupidBenchmarks
 {
@@ -87,11 +88,19 @@ namespace Metrics.StupidBenchmarks
 
     internal class Program
     {
+
         private static string target;
         private static CommonOptions targetOptions;
 
         private static void Main(string[] args)
         {
+            //var options = new Options();
+            //if (!Parser.Default.ParseArguments(args, options, (t, o) => { target = t; targetOptions = o as CommonOptions; }))
+            //{
+            //    Console.WriteLine(new CommonOptions().GetUsage());
+            //    Environment.Exit(CommandLine.Parser.DefaultExitCodeFail);
+            //}
+
             BenchmarkRunner.DefaultTotalSeconds = targetOptions.Seconds;
             BenchmarkRunner.DefaultMaxThreads = targetOptions.MaxThreads;
 
