@@ -9,9 +9,13 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\..\bin\Debug\Tests\</OutputPath>
+	<DebugType>full</DebugType>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>..\..\bin\Release\Tests\</OutputPath>
+	<DebugType>pdbonly</DebugType>
+	<DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs">
@@ -19,7 +23,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Adapters\Nancy.Metrics\Nancy.Metrics.csproj" />
     <ProjectReference Include="..\Adapters\Owin.Metrics\Owin.Metrics.csproj" />
     <ProjectReference Include="..\Metrics\Metrics.csproj" />
   </ItemGroup>
@@ -30,9 +33,6 @@
     <PackageReference Include="FluentAssertions" Version="6.6.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.3.256001">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.AspNet.WebApi.Owin" Version="5.2.7" />
     <PackageReference Include="Microsoft.Owin.Testing" Version="4.2.0" />
     <PackageReference Include="Nancy.Testing" Version="2.0.0" />

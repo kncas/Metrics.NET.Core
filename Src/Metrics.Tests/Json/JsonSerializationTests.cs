@@ -122,7 +122,7 @@ namespace Metrics.Tests.Json
 
             var result = JsonConvert.DeserializeObject<JsonMetricsContext>(json);
 
-            result.Counters.Should().BeEquivalentTo(jsonContext.Counters.ToArray());
+            result.Counters.Should().BeEquivalentTo(jsonContext.Counters);
         }
 
         [Fact]

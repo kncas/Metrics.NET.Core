@@ -29,9 +29,6 @@
     <ProjectReference Include="..\..\Metrics\Metrics.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.3.256001">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="Nancy" Version="2.0.0" />
   </ItemGroup>
 </Project>

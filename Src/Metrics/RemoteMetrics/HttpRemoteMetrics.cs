@@ -18,20 +18,10 @@ namespace Metrics.RemoteMetrics
             this.httpClient = httpClient;
         }
 
-        //private class CustomClient : WebClients
-        //{
-        //    protected override WebRequest GetWebRequest(Uri address)
-        //    {
-        //        HttpWebRequest request = base.GetWebRequest(address) as HttpWebRequest;
-        //        request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-        //        return request;
-        //    }
-        //}
-
         public async Task<JsonMetricsContext> FetchRemoteMetrics(Uri remoteUri, Func<string, JsonMetricsContext> deserializer, CancellationToken token)
         {
             var result = await httpClient.GetAsync(remoteUri);
-            var stringResult = await result.Content.ReadAsStringAsync();
+            var stringResult = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
             return deserializer(stringResult);
         }
     }

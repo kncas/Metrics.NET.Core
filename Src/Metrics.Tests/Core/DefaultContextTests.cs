@@ -9,6 +9,7 @@ namespace Metrics.Tests.Core
     public class DefaultContextTests
     {
         private readonly MetricsContext context = new DefaultMetricsContext();
+
         public MetricsData CurrentData
         { get { return this.context.DataProvider.CurrentMetricsData; } }
 

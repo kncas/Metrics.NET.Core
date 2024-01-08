@@ -18,24 +18,31 @@ namespace Metrics.Central
         {
             this.serviceProvider = serviceProvider;
         }
+
         private const string remotesFile = "remotes.txt";
         private readonly IServiceProvider serviceProvider;
 
-        //public bool Start(HostControl hostControl)
-        //{
-        //    Metric.Config
-        //        .WithJsonDeserialzier(JsonConvert.DeserializeObject<JsonMetricsContext>)
-        //        .WithAllCounters();
+        public Task StartAsync(CancellationToken cancellationToken)
+        {
+            Metric.Config
+                .WithJsonDeserialzier(JsonConvert.DeserializeObject<JsonMetricsContext>)
+                .WithAllCounters();
 
-        //    var remotes = ReadRemotesFromConfig();
+            var remotes = ReadRemotesFromConfig();
 
-        //    foreach (var uri in remotes)
-        //    {
-        //        Metric.Config.RegisterRemote(uri.ToString(), uri, TimeSpan.FromSeconds(1));
-        //    }
+            var remoteMetricsContext = serviceProvider.GetRequiredService<RemoteMetricsContext>();
+            foreach (var uri in remotes)
+            {
+                Metric.Config.RegisterRemote(uri.ToString(), uri, TimeSpan.FromSeconds(1), remoteMetricsContext);
+            }
 
-        //    return true;
-        //}
+            return Task.CompletedTask;
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
 
         private IEnumerable<Uri> ReadRemotesFromConfig()
         {
@@ -65,33 +72,6 @@ namespace Metrics.Central
                     yield return uri;
                 }
             }
-        }
-
-        //public bool Stop(HostControl hostControl)
-        //{
-        //    return true;
-        //}
-
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            Metric.Config
-                .WithJsonDeserialzier(JsonConvert.DeserializeObject<JsonMetricsContext>)
-                .WithAllCounters();
-
-            var remotes = ReadRemotesFromConfig();
-
-            var remoteMetricsContext = serviceProvider.GetRequiredService<RemoteMetricsContext>();
-            foreach (var uri in remotes)
-            {
-                Metric.Config.RegisterRemote(uri.ToString(), uri, TimeSpan.FromSeconds(1), remoteMetricsContext);
-            }
-
-            return Task.CompletedTask;
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
         }
     }
 }
