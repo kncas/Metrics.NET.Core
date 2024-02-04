@@ -1,7 +1,7 @@
-﻿using FluentAssertions;
-using Metrics.MetricData;
-using System;
+﻿using System;
 using System.Linq;
+using FluentAssertions;
+using Metrics.MetricData;
 using Xunit;
 
 namespace Metrics.Tests.Core
