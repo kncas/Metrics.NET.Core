@@ -26,7 +26,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		create-nuget.bat = create-nuget.bat
 		Publishing\Metrics.NET.nuspec = Publishing\Metrics.NET.nuspec
 		Publishing\Metrics.NLog.nuspec = Publishing\Metrics.NLog.nuspec
-		Publishing\Nancy.Metrics.nuspec = Publishing\Nancy.Metrics.nuspec
 		Publishing\Owin.Metrics.nuspec = Publishing\Owin.Metrics.nuspec
 		Publishing\push-nuget.bat = Publishing\push-nuget.bat
 		README.md = README.md
@@ -57,7 +56,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metrics.TestConsole", "Src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metrics.AspSample", "Samples\Metrics.AspSample\Metrics.AspSample.csproj", "{83F38EB9-504D-4B85-A181-7309EA08FAC2}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Metrics.Samples.FSharp", "Samples\Metrics.Samples.FSharp\Metrics.Samples.FSharp.fsproj", "{E9B06DE7-C129-4047-8685-C268E8BCE9D5}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Metrics.Samples.FSharp", "Samples\Metrics.Samples.FSharp\Metrics.Samples.FSharp.fsproj", "{E9B06DE7-C129-4047-8685-C268E8BCE9D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
