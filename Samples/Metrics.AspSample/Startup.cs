@@ -3,14 +3,9 @@
 // This file will need updated according to the specific scenario of the application being upgraded.
 // For more information on ASP.NET Core startup files, see https://docs.microsoft.com/aspnet/core/fundamentals/startup
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -38,7 +33,6 @@ namespace Metrics.AspSample
                 {
                     options.UseMemberCasing();
                 });
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,7 +55,7 @@ namespace Metrics.AspSample
         }
 
         private void ConfigureMvcOptions(MvcOptions mvcOptions)
-        { 
+        {
         }
     }
 }
