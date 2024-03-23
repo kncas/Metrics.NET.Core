@@ -14,7 +14,7 @@ namespace Metrics.Reporters
             { }
 
             public Value(string name, double value)
-                : this(name, value.ToString("F"))
+                : this(name, value.ToString("F2"))
             { }
 
             public Value(string name, long value)

@@ -15,7 +15,7 @@ namespace Metrics.Tests.Endpoints
             html.Should().NotBeEmpty();
 
             Action createHtml = () => CQ.CreateDocument(html);
-            createHtml.ShouldNotThrow();
+            createHtml.Should().NotThrow();
         }
     }
 }

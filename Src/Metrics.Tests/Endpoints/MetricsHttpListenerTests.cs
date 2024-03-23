@@ -81,7 +81,7 @@ namespace Metrics.Tests.Endpoints
             using (var config = CreateConfig().WithHttpEndpoint("http://localhost:58888/metricstest/HttpListenerTests/sameendpoint/"))
             {
                 var action = new Action(() => config.WithHttpEndpoint("http://localhost:58888/metricstest/HttpListenerTests/sameendpoint/"));
-                action.ShouldThrow<Exception>();
+                action.Should().Throw<Exception>();
             }
         }
 
@@ -92,11 +92,11 @@ namespace Metrics.Tests.Endpoints
             {
                 var whenInitialized = config.WhenEndpointInitialized();
 
-                whenInitialized.IsCompleted.ShouldBeEquivalentTo(false);
+                whenInitialized.IsCompleted.Should().Be(false);
 
                 await Task.WhenAny(whenInitialized, Task.Delay(5000));
 
-                whenInitialized.IsCompleted.ShouldBeEquivalentTo(true);
+                whenInitialized.IsCompleted.Should().Be(true);
             }
         }
 

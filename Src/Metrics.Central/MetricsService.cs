@@ -1,18 +1,28 @@
-﻿using System;
+﻿using Metrics.Json;
+using Metrics.RemoteMetrics;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Metrics.Json;
-using Newtonsoft.Json;
-using Topshelf;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Metrics.Central
 {
-    public class MetricsService : ServiceControl
+    public class MetricsService : IHostedService
     {
-        private const string remotesFile = "remotes.txt";
+        public MetricsService(IServiceProvider serviceProvider)
+        {
+            this.serviceProvider = serviceProvider;
+        }
 
-        public bool Start(HostControl hostControl)
+        private const string remotesFile = "remotes.txt";
+        private readonly IServiceProvider serviceProvider;
+
+        public Task StartAsync(CancellationToken cancellationToken)
         {
             Metric.Config
                 .WithJsonDeserialzier(JsonConvert.DeserializeObject<JsonMetricsContext>)
@@ -20,12 +30,18 @@ namespace Metrics.Central
 
             var remotes = ReadRemotesFromConfig();
 
+            var remoteMetricsContext = serviceProvider.GetRequiredService<RemoteMetricsContext>();
             foreach (var uri in remotes)
             {
-                Metric.Config.RegisterRemote(uri.ToString(), uri, TimeSpan.FromSeconds(1));
+                Metric.Config.RegisterRemote(uri.ToString(), uri, TimeSpan.FromSeconds(1), remoteMetricsContext);
             }
 
-            return true;
+            return Task.CompletedTask;
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
         }
 
         private IEnumerable<Uri> ReadRemotesFromConfig()
@@ -56,11 +72,6 @@ namespace Metrics.Central
                     yield return uri;
                 }
             }
-        }
-
-        public bool Stop(HostControl hostControl)
-        {
-            return true;
         }
     }
 }

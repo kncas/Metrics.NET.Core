@@ -11,12 +11,14 @@ namespace Metrics.RemoteMetrics
     public sealed class RemoteMetricsContext : ReadOnlyMetricsContext, MetricsDataProvider
     {
         private readonly Scheduler scheduler;
-
+        private readonly IHttpRemoteMetrics remoteMetrics;
         private MetricsData currentData = MetricsData.Empty;
 
-        public RemoteMetricsContext(Uri remoteUri, TimeSpan updateInterval, Func<string, JsonMetricsContext> deserializer)
+        public RemoteMetricsContext(Uri remoteUri, TimeSpan updateInterval, Func<string, JsonMetricsContext> deserializer, IHttpRemoteMetrics remoteMetrics)
             : this(new ActionScheduler(), remoteUri, updateInterval, deserializer)
-        { }
+        {
+            this.remoteMetrics = remoteMetrics;
+        }
 
         public RemoteMetricsContext(Scheduler scheduler, Uri remoteUri, TimeSpan updateInterval, Func<string, JsonMetricsContext> deserializer)
         {
@@ -28,7 +30,7 @@ namespace Metrics.RemoteMetrics
         {
             try
             {
-                var remoteContext = await HttpRemoteMetrics.FetchRemoteMetrics(remoteUri, deserializer, token).ConfigureAwait(false);
+                var remoteContext = await remoteMetrics.FetchRemoteMetrics(remoteUri, deserializer, token).ConfigureAwait(false);
                 remoteContext.Environment.Add("RemoteUri", remoteUri.ToString());
                 remoteContext.Environment.Add("RemoteVersion", remoteContext.Version);
                 remoteContext.Environment.Add("RemoteTimestamp", Clock.FormatTimestamp(remoteContext.Timestamp));

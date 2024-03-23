@@ -15,17 +15,17 @@ namespace Metrics.Tests.Json
 
             Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("de-DE");
 
-            value.ToString("F").Should().Be("0,50");
+            value.ToString("F2").Should().Be("0,50");
             new DoubleJsonValue(value).AsJson().Should().Be("0.50");
 
             Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("ru-RU");
 
-            value.ToString("F").Should().Be("0,50");
+            value.ToString("F2").Should().Be("0,50");
             new DoubleJsonValue(value).AsJson().Should().Be("0.50");
 
             Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
 
-            value.ToString("F").Should().Be("0.50");
+            value.ToString("F2").Should().Be("0.50");
             new DoubleJsonValue(value).AsJson().Should().Be("0.50");
         }
 
