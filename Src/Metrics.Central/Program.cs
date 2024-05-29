@@ -18,7 +18,6 @@ namespace Metrics.Central
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddHostedService<MetricsService>();
-                    services.AddSingleton<MetricsContext, RemoteMetricsContext>();
                     services.AddHttpClient<IHttpRemoteMetrics, HttpRemoteMetrics>().ConfigurePrimaryHttpMessageHandler(config => new HttpClientHandler { AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip });
                 });
     }

@@ -30,9 +30,12 @@ namespace Metrics.Central
 
             var remotes = ReadRemotesFromConfig();
 
-            var remoteMetricsContext = serviceProvider.GetRequiredService<RemoteMetricsContext>();
+            var remoteMetrics = serviceProvider.GetRequiredService<IHttpRemoteMetrics>();
             foreach (var uri in remotes)
             {
+                var remoteMetricsContext = new RemoteMetricsContext(uri,
+                    TimeSpan.FromSeconds(1), JsonConvert.DeserializeObject<JsonMetricsContext>, remoteMetrics);
+
                 Metric.Config.RegisterRemote(uri.ToString(), uri, TimeSpan.FromSeconds(1), remoteMetricsContext);
             }
 

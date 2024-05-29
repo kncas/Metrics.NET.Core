@@ -1,17 +1,11 @@
-#Metrics.NET
+#Metrics.NET.Core
 
-|Branch|Appveyor|Travis|
-|------|:--------:|:------:|
-|master|[![Master Build status](https://ci.appveyor.com/api/projects/status/me33pq0xqgpd4e7k/branch/master?svg=true)](https://ci.appveyor.com/project/hinteadan/metrics-net/branch/master)|[![Mono Build Status](https://travis-ci.org/Recognos/Metrics.NET.svg?branch=master)](https://travis-ci.org/Recognos/Metrics.NET)|
-|dev   |[![Dev Build status](https://ci.appveyor.com/api/projects/status/me33pq0xqgpd4e7k/branch/dev?svg=true)](https://ci.appveyor.com/project/hinteadan/metrics-net/branch/dev)|[![Mono Build Status](https://travis-ci.org/Recognos/Metrics.NET.svg?branch=dev)](https://travis-ci.org/Recognos/Metrics.NET)|
-
-[![NuGet Status](http://img.shields.io/nuget/v/Metrics.NET.svg)](https://www.nuget.org/packages/Metrics.NET/)
-[![Issue Stats](http://www.issuestats.com/github/Recognos/Metrics.NET/badge/pr)](http://www.issuestats.com/github/Recognos/Metrics.NET)
-[![Issue Stats](http://www.issuestats.com/github/Recognos/Metrics.NET/badge/issue)](http://www.issuestats.com/github/Recognos/Metrics.NET)
+[![NuGet Status](http://img.shields.io/nuget/v/Metrics.NET.Core.svg)](https://www.nuget.org/packages/Metrics.NET.Core/)
 
 Metrics.NET - a .NET Port, with lots of additional functionality, of the awesome Java [metrics library](https://github.com/dropwizard/metrics) by Coda Hale.
 
 This is a continuation of the original (now unmaintained) project https://github.com/etishor/Metrics.NET.
+Further added framework targets for .NET Standard 2.0 and .NET 5.0, 6.0, 7.0 and 8.0.
 
 A lot more [information and documentation are available in the wiki](https://github.com/Recognos/Metrics.NET/wiki).
 

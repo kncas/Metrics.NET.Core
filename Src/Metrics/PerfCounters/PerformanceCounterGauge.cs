@@ -17,8 +17,14 @@ namespace Metrics.PerfCounters
         {
             try
             {
+#if NET5_0_OR_GREATER
                 if (OperatingSystem.IsWindows())
                 {
+#else
+                var osVersion = Environment.OSVersion;
+                if (osVersion.Platform == PlatformID.Win32NT)
+                {
+#endif
                     this.performanceCounter = instance == null ?
                         new PerformanceCounter(category, counter, true) :
                         new PerformanceCounter(category, counter, instance, true);
@@ -37,8 +43,14 @@ namespace Metrics.PerfCounters
         {
             try
             {
+#if NET5_0_OR_GREATER
                 if (OperatingSystem.IsWindows())
                 {
+#else
+                var osVersion = Environment.OSVersion;
+                if (osVersion.Platform == PlatformID.Win32NT)
+                {
+#endif
                     return WindowsIdentity.GetCurrent().Name;
                 }
                 return "[Unknown user | OS system not supported ]";
@@ -60,8 +72,14 @@ namespace Metrics.PerfCounters
             {
                 try
                 {
+#if NET5_0_OR_GREATER
                     if (OperatingSystem.IsWindows())
                     {
+#else
+                    var osVersion = Environment.OSVersion;
+                    if (osVersion.Platform == PlatformID.Win32NT)
+                    {
+#endif
                         return this.performanceCounter?.NextValue() ?? double.NaN;
                     }
                     else
