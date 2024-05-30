@@ -13,14 +13,16 @@
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
     <PackageId>Metrics.NET.Core</PackageId>
     <Title>Metrics.NET.Core</Title>
-    <Version>0.5.5.1</Version>
+    <Version>0.5.5.2</Version>
     <Authors>iulian.margarintescu, The Recognos Metrics.NET Team</Authors>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/Recognos/Metrics.NET</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/kncas/Metrics.NET.Core</PackageProjectUrl>
     <PackageIconUrl>http://www.erata.net/Metrics.NET/metrics_32.png</PackageIconUrl>
+    <PackageIcon>metrics_32.png</PackageIcon>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>The library provides support for capturing: Gauges, Counters, Meters, Histograms and Timers</Description>
     <Copyright>Iulian Margarintescu, The Recognos Metrics.NET Team</Copyright>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>metrics, measurements, charts, timer, histogram, duration, health checks</PackageTags>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -49,6 +51,10 @@
     <EmbeddedResource Include="..\..\Publishing\metrics_32.png">
       <Link>Endpoints\metrics_32.png</Link>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\Publishing\metrics_32.png" Pack="true" PackagePath="\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
