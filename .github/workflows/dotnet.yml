@@ -29,4 +29,4 @@ jobs:
     - name: Run all tests
       run: dotnet test --verbosity normal --no-restore --configuration Release
     - name: Push all packages to nuget.org
-      run: dotnet nuget push *.nupkg -k ${{ secrets.NUGET_ORG_API_KEY }} -s https://api.nuget.org/v3/index.json
+      run: dotnet nuget push bin/Release/*.nupkg -k ${{ secrets.NUGET_ORG_API_KEY }} -s https://api.nuget.org/v3/index.json
