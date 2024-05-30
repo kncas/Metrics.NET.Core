@@ -1,5 +1,6 @@
 # Metrics.NET.Core
 
+[![Build](https://github.com/kncas/Metrics.NET.Core/actions/workflows/dotnet.yml/badge.svg)](https://github.com/kncas/Metrics.NET.Core/actions/workflows/dotnet.yml)
 [![NuGet Status](https://img.shields.io/nuget/v/Metrics.NET.Core.svg)](https://www.nuget.org/packages/Metrics.NET.Core/)
 
 Metrics.NET - a .NET Port, with lots of additional functionality, of the awesome Java [metrics library](https://github.com/dropwizard/metrics) by Coda Hale.
