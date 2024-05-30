@@ -27,4 +27,4 @@ jobs:
     - name: Build
       run: dotnet build -warnaserror --no-restore --configuration Release Src/Metrics/Metrics.csproj
     - name: Test
-      run: dotnet test --verbosity normal Src/**/*.Tests/*.Tests.csproj
+      run: dotnet test --verbosity normal --no-restore --configuration Release
