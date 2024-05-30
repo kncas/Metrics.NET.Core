@@ -13,7 +13,7 @@
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
     <PackageId>Metrics.NET.Core</PackageId>
     <Title>Metrics.NET.Core</Title>
-    <Version>0.5.5.2</Version>
+    <Version>0.5.5.3</Version>
     <Authors>iulian.margarintescu, The Recognos Metrics.NET Team</Authors>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/kncas/Metrics.NET.Core</PackageProjectUrl>
