@@ -8,11 +8,12 @@
     <RestorePackages>true</RestorePackages>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
     <PackageId>Metrics.NET.Core</PackageId>
     <Title>Metrics.NET.Core</Title>
-    <Version>0.5.5</Version>
+    <Version>0.5.5.1</Version>
     <Authors>iulian.margarintescu, The Recognos Metrics.NET Team</Authors>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Recognos/Metrics.NET</PackageProjectUrl>
