@@ -25,7 +25,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build Metrics project
-      run: dotnet build -warnaserror --no-restore --configuration Release Src/Metrics/Metrics.csproj
+      run: dotnet build /p:ContinuousIntegrationBuild=true -warnaserror --no-restore --configuration Release Src/Metrics/Metrics.csproj
     - name: Run all tests
       run: dotnet test --verbosity normal --no-restore --configuration Release
     - name: Push all packages to nuget.org
